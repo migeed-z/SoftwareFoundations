@@ -297,7 +297,7 @@ Proof. simpl. reflexivity. Qed.
 
 Example test_countoddmembers3:
   countoddmembers nil = 0.
- Proof. simpl. reflexivity.
+ Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (alternate)  *)
@@ -324,19 +324,19 @@ end.
 
 Example test_alternate1:
   alternate [1;2;3] [4;5;6] = [1;4;2;5;3;6].
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_alternate2:
   alternate [1] [4;5;6] = [1;4;5;6].
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_alternate3:
   alternate [1;2;3] [4] = [1;4;2;3].
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_alternate4:
   alternate [] [20;30] = [20;30].
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (* ----------------------------------------------------------------- *)
@@ -364,9 +364,9 @@ end.
 (** All these proofs can be done just by [reflexivity]. *)
 
 Example test_count1:              count 1 [1;2;3;1;4;1] = 3.
-Proof. reflexivity.
+Proof. reflexivity. Qed.
 Example test_count2:              count 6 [1;2;3;1;4;1] = 0.
-Proof. reflexivity.
+Proof. reflexivity. Qed.
 
 (** Multiset [sum] is similar to set [union]: [sum a b] contains all
     the elements of [a] and of [b].  (Mathematicians usually define
@@ -384,24 +384,24 @@ Definition sum : bag -> bag -> bag := app.
  
 
 Example test_sum1:              count 1 (sum [1;2;3] [1;4;1]) = 3.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Definition add (v:nat) (s:bag) : bag :=
 v :: s.
 
 Example test_add1:                count 1 (add 1 [1;4;1]) = 3.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 Example test_add2:                count 5 (add 1 [1;4;1]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Definition member (v:nat) (s:bag) : bool :=  
  negb (beq_nat (count v s) O).
 
 Example test_member1: member 1 [1;4;1] = true.
-Proof. reflexivity.
+Proof. reflexivity. Qed.
 
 Example test_member2:             member 2 [1;4;1] = false.
-Proof. reflexivity.
+Proof. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (bag_more_functions)  *)
@@ -421,19 +421,19 @@ end.
 
 Example test_remove_one1:
   count 5 (remove_one 5 [2;1;5;4;1]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_one2:
   count 5 (remove_one 5 [2;1;4;1]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_one3:
   count 4 (remove_one 5 [2;1;4;5;1;4]) = 2.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_one4:
   count 5 (remove_one 5 [2;1;5;4;5;1;4]) = 1.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Fixpoint remove_all (v:nat) (s:bag) : bag :=
 match s with
@@ -445,16 +445,16 @@ match s with
 end.
 
 Example test_remove_all1:  count 5 (remove_all 5 [2;1;5;4;1]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_all2:  count 5 (remove_all 5 [2;1;4;1]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_all3:  count 4 (remove_all 5 [2;1;4;5;1;4]) = 2.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_remove_all4:  count 5 (remove_all 5 [2;1;5;4;5;1;4;5;1;4]) = 0.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Fixpoint subset (s1:bag) (s2:bag) : bool :=
 match s1, s2 with
@@ -466,10 +466,10 @@ end.
 
 
 Example test_subset1:              subset [1;2] [2;1;4;1] = true.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 Example test_subset2:              subset [1;2;2] [2;1;4;1] = false.
-Proof. simpl. reflexivity.
+Proof. simpl. reflexivity. Qed.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_bag_theorem : option (prod nat string) := None.
@@ -895,7 +895,7 @@ Qed.
 Theorem count_member_nonzero : forall (s : bag),
   leb 1 (count 1 (1 :: s)) = true.
 Proof. 
-intros l. simpl. reflexivity.
+intros l. simpl. reflexivity. Qed.
 
 (** [] *)
 
@@ -1028,17 +1028,21 @@ Definition option_elim (d : nat) (o : natoption) : nat :=
 (** Using the same idea, fix the [hd] function from earlier so we don't
     have to pass a default element for the [nil] case.  *)
 
-Definition hd_error (l : natlist) : natoption
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition hd_error (l : natlist) : natoption :=
+  match l with
+  | nil => None
+  | h :: t => Some h
+  end.
+
 
 Example test_hd_error1 : hd_error [] = None.
- (* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_hd_error2 : hd_error [1] = Some 1.
- (* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_hd_error3 : hd_error [5;6] = Some 5.
- (* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, optional (option_elim_hd)  *)
@@ -1050,7 +1054,7 @@ Proof.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
-End NatList.
+
 
 (* ################################################################# *)
 (** * Partial Maps *)
@@ -1081,13 +1085,15 @@ Definition beq_id (x1 x2 : id) :=
 (** **** Exercise: 1 star (beq_id_refl)  *)
 Theorem beq_id_refl : forall x, true = beq_id x x.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros x. induction x.
+simpl. rewrite <- beq_nat_refl. reflexivity. Qed.
+
 (** [] *)
 
 (** Now we define the type of partial maps: *)
 
 Module PartialMap.
-Export NatList.
+Module NatList.
   
 Inductive partial_map : Type :=
   | empty  : partial_map
@@ -1128,17 +1134,18 @@ Theorem update_eq :
   forall (d : partial_map) (x : id) (v: nat),
     find x (update d x v) = Some v.
 Proof.
- (* FILL IN HERE *) Admitted.
-(** [] *)
+intros x d v. induction d. simpl. rewrite <- beq_nat_refl. reflexivity. Qed.
 
 (** **** Exercise: 1 star (update_neq)  *)
 Theorem update_neq :
   forall (d : partial_map) (x y : id) (o: nat),
     beq_id x y = false -> find x (update d y o) = find x d.
 Proof.
- (* FILL IN HERE *) Admitted.
+ intros x y d o. 
+intros H.
+simpl.  rewrite -> H. reflexivity. Qed.
 (** [] *)
-End PartialMap.
+End NatList.
 
 (** **** Exercise: 2 stars (baz_num_elts)  *)
 (** Consider the following inductive definition: *)
@@ -1153,7 +1160,7 @@ Inductive baz : Type :=
 (* FILL IN HERE *)
 
 (* Do not modify the following line: *)
-Definition manual_grade_for_baz_num_elts : option (prod nat string) := None.
+
 (** [] *)
 
 
