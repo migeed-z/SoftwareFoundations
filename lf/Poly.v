@@ -1,11 +1,15 @@
 (** * Poly: Polymorphism and Higher-Order Functions *)
 
+
+
 (* Final reminder: Please do not put solutions to the exercises in
    publicly accessible places.  Thank you!! *)
 
 (* Suppress some annoying warnings from Coq: *)
 Set Warnings "-notation-overridden,-parsing".
-From LF Require Export Lists.
+
+Add LoadPath "/Users/zeinamigeed/SoftwareFoundations/lf".
+Require Export Lists.
 
 (* ################################################################# *)
 (** * Polymorphism *)
@@ -406,17 +410,22 @@ Definition list123''' := [1; 2; 3].
 Theorem app_nil_r : forall (X:Type), forall l:list X,
   l ++ [] = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros l. intros l0. induction l0. simpl. reflexivity.
+simpl. rewrite -> IHl0. reflexivity. Qed.
 
 Theorem app_assoc : forall A (l m n:list A),
   l ++ m ++ n = (l ++ m) ++ n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros l m n n0. induction m. simpl. reflexivity.
+simpl. rewrite -> IHm. reflexivity. Qed.
+
 
 Lemma app_length : forall (X:Type) (l1 l2 : list X),
   length (l1 ++ l2) = length l1 + length l2.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros X l1 l2. induction l1. 
+simpl. reflexivity.
+simpl. rewrite -> IHl1. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (more_poly_exercises)  *)
@@ -424,6 +433,11 @@ Proof.
 
 Theorem rev_app_distr: forall X (l1 l2 : list X),
   rev (l1 ++ l2) = rev l2 ++ rev l1.
+Proof.
+  (* FILL IN HERE *) Admitted.
+
+Theorem rev_app_distr2: forall X (l1 l2 : list X),
+  rev l2 ++ rev l1 = rev (l1 ++ l2).
 Proof.
   (* FILL IN HERE *) Admitted.
 
@@ -690,17 +704,16 @@ Proof. reflexivity.  Qed.
     and returns a list of just those that are even and greater than
     7. *)
 
-Definition filter_even_gt7 (l : list nat) : list nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition filter_even_gt7 (l : list nat) : list nat :=
+(filter (fun n => (andb (leb 7 n) (evenb n))) l). 
 
 Example test_filter_even_gt7_1 :
   filter_even_gt7 [1;2;6;9;10;3;12;8] = [10;12;8].
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_filter_even_gt7_2 :
   filter_even_gt7 [5;2;6;19;129] = [].
- (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof. reflexivity. Qed.
 
 (** **** Exercise: 3 stars (partition)  *)
 (** Use [filter] to write a Coq function [partition]:
@@ -774,7 +787,11 @@ Proof. reflexivity.  Qed.
 Theorem map_rev : forall (X Y : Type) (f : X -> Y) (l : list X),
   map f (rev l) = rev (map f l).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y f l. induction l.
+- reflexivity.
+- simpl.  rewrite <- IHl. rewrite -> IHl.  Admitted.
+
+
 (** [] *)
 
 (** **** Exercise: 2 stars, recommended (flat_map)  *)
