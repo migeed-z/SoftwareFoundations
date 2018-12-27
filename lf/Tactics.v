@@ -951,7 +951,7 @@ Theorem sillyfun1_odd : forall (n : nat),
      sillyfun1 n = true ->
      oddb n = true.
 Proof.
-  intros n eq. unfold sillyfun1 in eq.
+ (** intros n eq. unfold sillyfun1 in eq.
   destruct (beq_nat n 3) eqn:Heqe3.
   (* Now we have the same state as at the point where we got
      stuck above, except that the context contains an extra
@@ -964,11 +964,11 @@ Proof.
         of the function we are reasoning about, we can use
         [eqn:] again in the same way, allow us to finish the
         proof. *)
-      destruct (beq_nat n 5) eqn:Heqe5.
+      destruct (beq_nat n 5) eqn:Heqe5. same issue with this function again. Ask John.
         + (* e5 = true *)
           apply beq_nat_true in Heqe5.
           rewrite -> Heqe5. reflexivity.
-        + (* e5 = false *) inversion eq.  Qed.
+        + (* e5 = false *) inversion eq.  Qed.**) 
 
 (** **** Exercise: 2 stars (destruct_eqn_practice)  *)
 Theorem bool_fn_applied_thrice :
