@@ -11,9 +11,24 @@
     - how to strengthen an induction hypothesis (and when such
       strengthening is required); and
     - more details on how to reason by case analysis. *)
+Add LoadPath "/Users/zeinamigeed/SoftwareFoundations/lf".
 
 Set Warnings "-notation-overridden,-parsing".
-From LF Require Export Poly.
+Require Export Poly.
+
+
+Theorem beq_nat_true : forall n m,
+    beq_nat n m = true -> n = m.
+Proof.
+  intros n. induction n as [| n].
+  - (* n = 0 *)
+    destruct m as [|m'].
+    + reflexivity.
+    + intros. inversion H.
+  - (* n = S n' *)
+    intros m H. destruct m as [|m'].
+    + inversion H.
+    + apply IHn in H. rewrite H. reflexivity.
 
 (* ################################################################# *)
 (** * The [apply] Tactic *)
@@ -73,7 +88,8 @@ Theorem silly_ex :
      oddb 3 = true ->
      evenb 4 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n a. apply a. Qed.
+
 (** [] *)
 
 (** To use the [apply] tactic, the (conclusion of the) fact
@@ -105,8 +121,7 @@ Theorem rev_exercise1 : forall (l l' : list nat),
      l = rev l' ->
      l' = rev l.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+intros l l'. intros H.  rewrite -> H. symmetry. apply rev_involutive. Qed.
 
 (** **** Exercise: 1 star, optional (apply_rewrite)  *)
 (** Briefly explain the difference between the tactics [apply] and
@@ -172,8 +187,7 @@ Example trans_eq_exercise : forall (n m o p : nat),
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+intros m o n p H. rewrite -> H.  intros H'. apply H'. Qed.
 
 (* ################################################################# *)
 (** * The [inversion] Tactic *)
@@ -249,7 +263,8 @@ Example inversion_ex3 : forall (X : Type) (x y z w : X) (l j : list X),
   x :: l = z :: j ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
+
+intros. inversion H. inversion H0. symmetry.  Admitted. (* something problematic here *)
 (** [] *)
 
 (** When used on a hypothesis involving an equality between
@@ -313,7 +328,7 @@ Example inversion_ex6 : forall (X : Type)
   y :: l = z :: j ->
   x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros. inversion H. Qed.
 (** [] *)
 
 (** To summarize this discussion, suppose [H] is a hypothesis in the
@@ -403,8 +418,18 @@ Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n'].
-  (* FILL IN HERE *) Admitted.
+ induction n as [|n'].
+  intros m e1.  inversion e1.
+  destruct m as [|m']. reflexivity. inversion H0.
+  intros m e1.
+  destruct m as [|m']. inversion e1.
+  inversion e1.
+  rewrite plus_comm in H0.
+  rewrite plus_comm with (m:=S m') (n:=m') in H0.
+  inversion H0.
+  apply IHn' in H1.
+  rewrite H1.
+  reflexivity.
 (** [] *)
 
 (* ################################################################# *)
@@ -557,10 +582,8 @@ Proof.
 (** The following exercise requires the same pattern. *)
 
 (** **** Exercise: 2 stars (beq_nat_true)  *)
-Theorem beq_nat_true : forall n m,
-    beq_nat n m = true -> n = m.
-Proof.
-  (* FILL IN HERE *) Admitted.
+
+
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (beq_nat_true_informal)  *)
@@ -589,7 +612,7 @@ Proof.
     + (* n = S n' *) inversion eq.
   - (* m = S m' *) intros eq. destruct n as [| n'].
     + (* n = O *) inversion eq.
-    + (* n = S n' *) apply f_equal.
+    + (* n = S n' *) apply f_equal.  
         (* Stuck again here, just like before. *)
 Abort.
 
@@ -673,13 +696,15 @@ Proof.
     let's digress briefly and use [beq_nat_true] to prove a similar
     property of identifiers that we'll need in later chapters: *)
 
+
 Theorem beq_id_true : forall x y,
   beq_id x y = true -> x = y.
 Proof.
-  intros [m] [n]. simpl. intros H.
-  assert (H' : m = n). { apply beq_nat_true. apply H. }
-  rewrite H'. reflexivity.
-Qed.
+ (** intros [m] [n]. simpl. intros H.
+ assert (H' : m = n). 
+apply beq_nat_true. problem in this line. Undefined, even though it's defined above.
+  rewrite H'. reflexivity.**)
+Admitted.
 
 (** **** Exercise: 3 stars, recommended (gen_dep_practice)  *)
 (** Prove this by induction on [l]. *)
@@ -688,7 +713,15 @@ Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
      length l = n ->
      nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n x l.
+generalize dependent l.
+induction n as [| n']. 
+intros l' len. destruct l'. simpl. reflexivity.
+simpl. inversion len. 
+
+intros l H. destruct l. simpl.   reflexivity. 
+simpl. rewrite -> IHn'. reflexivity. inversion H. reflexivity. Qed.
+
 (** [] *)
 
 (* ################################################################# *)
