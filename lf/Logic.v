@@ -1,7 +1,8 @@
 (** * Logic: Logic in Coq *)
 
+Add LoadPath "/Users/zeinamigeed/SoftwareFoundations/lf".
 Set Warnings "-notation-overridden,-parsing".
-From LF Require Export Tactics.
+Require Export Tactics.
 
 (** In previous chapters, we have seen many examples of factual
     claims (_propositions_) and ways of presenting evidence of their
@@ -156,7 +157,15 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+ intros n m H.
+  apply and_intro.
+ induction n as [| n'].
+    reflexivity.
+    inversion H.
+ induction m as [| m'].
+    reflexivity.
+    rewrite plus_comm in H. inversion H. Qed.
+
 (** [] *)
 
 (** So much for proving conjunctive statements.  To go in the other
@@ -231,7 +240,7 @@ Proof.
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros P Q [a b].  apply b. Qed.
 (** [] *)
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
@@ -257,7 +266,7 @@ Theorem and_assoc : forall P Q R : Prop,
   P /\ (Q /\ R) -> (P /\ Q) /\ R.
 Proof.
   intros P Q R [HP [HQ HR]].
-  (* FILL IN HERE *) Admitted.
+split. split. apply HP. apply HQ. apply HR. Qed.
 (** [] *)
 
 (** By the way, the infix notation [/\] is actually just syntactic
@@ -321,14 +330,21 @@ Qed.
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n m. destruct n.
+left. reflexivity.
+
+destruct m. right. reflexivity. 
+simpl. intros H. inversion H. Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star (or_commut)  *)
 Theorem or_commut : forall P Q : Prop,
   P \/ Q  -> Q \/ P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros a b [c | d].
+right. apply c. left. apply d.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -383,7 +399,8 @@ Proof.
 Fact not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros P contra H K.  destruct contra. apply K. Qed.
+
 (** [] *)
 
 (** This is how we use [not] to state that [0] and [1] are different
@@ -445,14 +462,19 @@ Definition manual_grade_for_double_neg_inf : option (prod nat string) := None.
 Theorem contrapositive : forall (P Q : Prop),
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros P Q H1 H2 H3. unfold not in H2. apply H1 in H3. 
+apply H2 in H3. inversion H3. 
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star (not_both_true_and_false)  *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros P H. unfold not in H. inversion H. apply H1 in H0. inversion H0.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)  *)
@@ -572,7 +594,13 @@ Proof.
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros P Q R. split.
+intros H. split. inversion H. left. apply H0. right. inversion H0. apply H1.
+inversion H. left. apply H0. inversion H0. right. apply H2.
+
+intros [].
+inversion H.  left. apply H1. inversion H0. left. apply H2. right.
+split. apply H1. apply H2. Qed.
 (** [] *)
 
 (** Some of Coq's tactics treat [iff] statements specially, avoiding
@@ -672,7 +700,13 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+ intros a b c.
+unfold not.
+intros H.
+inversion H.
+apply H0. apply c.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars (dist_exists_or)  *)
@@ -682,7 +716,18 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
+intros a b c. split. 
+intros H. inversion H as [A B].
+destruct B as [Px | Qx].
+left. exists A. apply Px.
+right. exists A. apply Qx.
+
+intros H2.
+destruct H2 as [A1 | B1].
+inversion A1 as [Ax Bx].
+exists Ax. left.  apply Bx.
+inversion B1. exists x. right. apply H. Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -764,7 +809,7 @@ Lemma In_map_iff :
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+Admitted.
 (** [] *)
 
 (** **** Exercise: 2 stars (In_app_iff)  *)
@@ -1219,7 +1264,18 @@ Proof. apply even_bool_prop. reflexivity. Qed.
 Lemma andb_true_iff : forall b1 b2:bool,
   b1 && b2 = true <-> b1 = true /\ b2 = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros.
+split.
+intros. 
+split. 
+destruct b1. 
+destruct b2. reflexivity. reflexivity.
+inversion H.
+destruct b2. reflexivity. destruct b1. apply H. apply H.
+
+intros. inversion H.
+destruct b1. destruct b2. reflexivity. apply H1.
+destruct b2. apply H0. apply H0. Qed.
 
 Lemma orb_true_iff : forall b1 b2,
   b1 || b2 = true <-> b1 = true \/ b2 = true.
