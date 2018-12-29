@@ -1,7 +1,8 @@
 (** * IndProp: Inductively Defined Propositions *)
+Add LoadPath "/Users/zeinamigeed/SoftwareFoundations/lf".
 
 Set Warnings "-notation-overridden,-parsing".
-From LF Require Export Logic.
+Require Export Logic.
 Require Coq.omega.Omega.
 
 (* ################################################################# *)
@@ -128,9 +129,12 @@ Qed.
 
 (** **** Exercise: 1 star (ev_double)  *)
 Theorem ev_double : forall n,
-  ev (double n).
+  ev (double n). 
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n. induction n.
+apply ev_0. simpl.  apply ev_SS. apply IHn.
+Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -274,7 +278,11 @@ Proof.
 Theorem SSSSev__even : forall n,
   ev (S (S (S (S n)))) -> ev n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n H.
+inversion H.
+inversion H1.
+apply H3.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star (even5_nonsense)  *)
@@ -283,7 +291,9 @@ Proof.
 Theorem even5_nonsense :
   ev 5 -> 2 + 2 = 9.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros. inversion H.
+inversion H1. inversion H3.
+Qed.
 (** [] *)
 
 (** The way we've used [inversion] here may seem a bit
@@ -409,7 +419,10 @@ Qed.
 (** **** Exercise: 2 stars (ev_sum)  *)
 Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n m E1 E2. induction E1. inversion E2. simpl.
+apply ev_0. simpl. apply ev_SS. apply H.
+simpl. apply ev_SS. apply IHE1. 
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, optional (ev'_ev)  *)
@@ -438,7 +451,15 @@ Proof.
 Theorem ev_ev__ev : forall n m,
   ev (n+m) -> ev n -> ev m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+intros n m E1 E2. induction E2. 
+simpl in E1. apply E1. 
+simpl in E1. 
+apply ev_SS in IHE2.
+inversion IHE2.
+apply H0.
+inversion E1. 
+apply H0.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, optional (ev_plus_plus)  *)
